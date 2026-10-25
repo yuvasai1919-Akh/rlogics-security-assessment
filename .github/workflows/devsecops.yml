@@ -87,7 +87,8 @@ jobs:
             zap-baseline.py -t http://lab-app:8000 -J zap-baseline.json -r zap-baseline.html
           zap_status=$?
           echo "ZAP baseline exit code: $zap_status"
-          if [ "$zap_status" -eq 1 ]; then
+          # zap-baseline exit codes: 0=pass, 1=FAIL alerts, 2=WARN alerts only, 3=ZAP error
+          if [ "$zap_status" -eq 2 ]; then
             echo "ZAP completed with warnings only."
             exit 0
           fi
