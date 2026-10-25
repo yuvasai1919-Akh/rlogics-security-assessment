@@ -31,8 +31,10 @@ def security_headers(resp):
     resp.headers["Content-Security-Policy"] = "default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'"
     resp.headers["Cache-Control"] = "no-store"
     resp.headers["Referrer-Policy"] = "no-referrer"
-    resp.headers["Permission-Policy"] = "camera=(), microphone=(), geolocation=()"
-    resp.headers["Cross-Origin-Embedder-Policy"]= "require-corp"
+    resp.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    resp.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+    resp.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    resp.headers["Cross-Origin-Resource-Policy"] = "same-origin"
     return resp
 
 
