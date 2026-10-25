@@ -79,7 +79,7 @@ jobs:
           docker build --pull -t lab-app:ci devsecops/remediated
           docker run -d --name lab-app --network lab-net lab-app:ci
           sleep 5
-            - name: ZAP baseline (passive) against remediated app
+      - name: ZAP baseline (passive) against remediated app
         run: |
           mkdir -p out && chmod 777 out
           set +e
