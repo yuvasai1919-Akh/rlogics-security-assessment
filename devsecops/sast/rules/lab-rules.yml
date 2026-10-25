@@ -1,0 +1,37 @@
+rules:
+  # A small custom rule so the SAST step works offline and so you can talk about writing rules,
+  # not just consuming registry packs. Validate with:  semgrep --validate --config devsecops/sast/rules
+  - id: lab-sql-built-from-string
+    languages: [python]
+    severity: ERROR
+    message: >-
+      SQL statement is built from string formatting/concatenation. Use parameterised queries
+      (cursor.execute(sql, params)) so user input is always treated as data.
+    metadata:
+      cwe: "CWE-89: SQL Injection"
+      owasp: "A03:2021 Injection"
+      confidence: HIGH
+    patterns:
+      - pattern-either:
+          - pattern: $Q = "..." % $X
+          - pattern: $Q = "...".format(...)
+          - pattern: $Q = f"..."
+      - pattern-inside: |
+          def $F(...):
+              ...
+              $Q = ...
+              ...
+              $DB.execute($Q)
+              ...
+
+  - id: lab-yaml-unsafe-load
+    languages: [python]
+    severity: ERROR
+    message: yaml.load with a non-safe Loader can construct arbitrary objects. Use yaml.safe_load.
+    metadata:
+      cwe: "CWE-502: Deserialization of Untrusted Data"
+      confidence: HIGH
+    pattern-either:
+      - pattern: yaml.load(..., Loader=yaml.Loader)
+      - pattern: yaml.load(..., Loader=yaml.UnsafeLoader)
+      - pattern: yaml.load($X)

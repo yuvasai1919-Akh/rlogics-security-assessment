@@ -1,0 +1,10 @@
+test_1_retrieval_respects_user_access (__main__.LocalSecurityTests.test_1_retrieval_respects_user_access) ... ok
+test_2_retrieved_injection_is_not_a_tool_call (__main__.LocalSecurityTests.test_2_retrieved_injection_is_not_a_tool_call) ... ok
+test_3_backend_denies_privileged_tool (__main__.LocalSecurityTests.test_3_backend_denies_privileged_tool) ... ok
+test_4_input_and_output_validation (__main__.LocalSecurityTests.test_4_input_and_output_validation) ... ok
+test_5_prompt_canary_is_not_in_public_fixture (__main__.LocalSecurityTests.test_5_prompt_canary_is_not_in_public_fixture) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.002s
+
+OK

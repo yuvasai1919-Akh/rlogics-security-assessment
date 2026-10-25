@@ -1,0 +1,7 @@
+PASS  SAST (Semgrep)
+PASS  SCA+secrets+misconfig fs
+PASS  Build image
+PASS  Image scan + gate
+PASS  SBOM (CycloneDX+SPDX)
+PASS  DAST baseline (ZAP)
+PASS  Sign + verify (Cosign)

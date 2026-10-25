@@ -1,0 +1,36 @@
+# Dedicated service account. The app does not call the Kubernetes API, so the token is NOT mounted
+# and no Role is bound: the least privilege for this workload is "no API access at all".
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: assessment-web
+  namespace: assessment
+automountServiceAccountToken: false
+---
+# Pattern example for a workload that DOES need API access: one verb, one resource, by name.
+# It is bound to the SA but grants only reading a single ConfigMap. The pod still does not mount
+# the token (see Deployment), so this is a pattern demonstration, not active access.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: assessment-web-read-own-config
+  namespace: assessment
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["assessment-web-config"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: assessment-web-read-own-config
+  namespace: assessment
+subjects:
+  - kind: ServiceAccount
+    name: assessment-web
+    namespace: assessment
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: assessment-web-read-own-config

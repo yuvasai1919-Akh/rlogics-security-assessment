@@ -1,0 +1,8 @@
+[
+  {
+    "id": "CVE-0000-00000",
+    "reason": "SYNTHETIC EXAMPLE: vulnerable function not reachable (VEX: not_affected / vulnerable_code_not_in_execute_path)",
+    "approved_by": "service-owner + security-lead (synthetic)",
+    "expires": "2099-12-31"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "SchemaVersion": 2,
+  "ArtifactName": "lab-app:vulnerable",
+  "Results": [
+    {
+      "Target": "requirements.txt",
+      "Class": "lang-pkgs",
+      "Type": "pip",
+      "Vulnerabilities": [
+        {"VulnerabilityID": "CVE-2099-0001", "PkgName": "examplelib", "InstalledVersion": "1.0.0",
+         "FixedVersion": "1.0.5", "Severity": "CRITICAL", "Title": "SYNTHETIC critical with a fix"},
+        {"VulnerabilityID": "CVE-2099-0002", "PkgName": "otherlib", "InstalledVersion": "2.1.0",
+         "FixedVersion": "2.1.9", "Severity": "HIGH", "Title": "SYNTHETIC high with a fix"},
+        {"VulnerabilityID": "CVE-2099-0003", "PkgName": "midlib", "InstalledVersion": "0.9.0",
+         "FixedVersion": "", "Severity": "MEDIUM", "Title": "SYNTHETIC medium, no fix"}
+      ]
+    }
+  ]
+}

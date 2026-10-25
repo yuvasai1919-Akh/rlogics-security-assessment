@@ -1,0 +1,60 @@
+# EXAMPLE - not applied by `make k8s-policies` (lives in examples/ and needs YOUR public key).
+# Cosign verification at admission using the current Kyverno ImageValidatingPolicy kind
+# (replacement for verifyImages in the deprecated ClusterPolicy; legacy version: policies/legacy/).
+#
+# Structure taken from the Kyverno ImageValidatingPolicy docs; NOT tested against a live cluster.
+# Confirm field names for your version with:  kubectl explain imagevalidatingpolicies.spec
+#
+# Start with Audit to observe, move to Deny when trusted. Signature checks must fail CLOSED
+# (failurePolicy: Fail): a verification outage must not become "allow everything".
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: verify-image-signature
+spec:
+  validationActions: [Audit]            # lab: Audit. Production: Deny
+  failurePolicy: Fail
+  webhookConfiguration:
+    timeoutSeconds: 30
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  matchImageReferences:
+    - glob: "lab-registry:5000/lab-app*"   # adjust to the registry your cluster can reach
+  attestors:
+    - name: lab-key
+      cosign:
+        key:
+          data: |
+            -----BEGIN PUBLIC KEY-----
+            REPLACE_WITH_devsecops_signing_keys_cosign.pub_CONTENT
+            -----END PUBLIC KEY-----
+        ctlog:
+          insecureIgnoreTlog: true      # LAB ONLY: the key-based lab signs without a transparency log
+          insecureIgnoreSCT: true       # LAB ONLY
+  validations:
+    - message: "Image signature verification failed (unsigned, tampered, or signed by an unknown key)."
+      expression: >-
+        images.containers.map(image, verifyImageSignatures(image, [attestors.lab-key])).all(e, e > 0)
+  validationConfigurations:
+    mutateDigest: true                  # rewrite tag -> verified digest
+    verifyDigest: true
+    required: true
+
+# ---- Production (keyless) variant of the attestor --------------------------------------------
+#  attestors:
+#    - name: github
+#      cosign:
+#        keyless:
+#          identities:
+#            - issuer:  "https://token.actions.githubusercontent.com"
+#              subject: "https://github.com/YOUR-ORG/YOUR-REPO/.github/workflows/devsecops.yml@refs/heads/main"
+#        ctlog:
+#          url: "https://rekor.sigstore.dev"     # keep transparency-log checks ON in production
+#  validations:
+#    - expression: >-
+#        images.containers.map(image, verifyImageSignatures(image, [attestors.github])).all(e, e > 0)
+# Also require signed attestations (SBOM, scan result, provenance) via spec.attestations - see the docs.

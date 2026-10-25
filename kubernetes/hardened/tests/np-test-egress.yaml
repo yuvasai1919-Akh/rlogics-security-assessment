@@ -1,0 +1,23 @@
+# TEST-ONLY policy: lets the two test client pods send traffic to the web pods on 8080.
+# Without it, default-deny-all would block the clients' EGRESS and both tests would report BLOCKED,
+# proving nothing. With it, the only thing that decides the outcome is the web pods' INGRESS policy
+# (allow-clients-to-web), which requires the label access=assessment-web.
+# Deleted automatically by test_networkpolicy.sh.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-test-client-egress
+  namespace: assessment
+spec:
+  podSelector:
+    matchLabels:
+      role: np-test
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: assessment-web
+      ports:
+        - protocol: TCP
+          port: 8080

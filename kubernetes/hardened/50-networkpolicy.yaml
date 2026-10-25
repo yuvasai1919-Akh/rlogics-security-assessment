@@ -1,0 +1,31 @@
+# 1) Default deny everything in the namespace (ingress and egress).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: assessment
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+# 2) Allow ONLY labelled client pods in this namespace to reach the web pods on 8080.
+#    The web app is a static server: it needs no egress (not even DNS), so none is granted.
+#    If a real app needs DNS, add an explicit egress rule to kube-dns (UDP/TCP 53) - never "allow all".
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-clients-to-web
+  namespace: assessment
+spec:
+  podSelector:
+    matchLabels:
+      app: assessment-web
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              access: assessment-web
+      ports:
+        - protocol: TCP
+          port: 8080

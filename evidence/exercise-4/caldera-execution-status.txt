@@ -1,0 +1,23 @@
+Exercise 4 — MITRE Caldera
+
+Status: Research and benign operation plan completed.
+Live execution: Not performed.
+
+Completed:
+- Reviewed Caldera architecture, agents, plugins, abilities, adversary
+  profiles, operations, planners and facts.
+- Documented three benign discovery behaviours mapped to ATT&CK:
+  T1033 (System Owner/User Discovery), T1082 (System Information
+  Discovery), and T1057 (Process Discovery).
+- Defined an isolated lab operation plan with manual approval and
+  stop conditions.
+- Documented expected telemetry, blue-team validation uses, isolation
+  and cleanup.
+
+Limitations:
+- No live Caldera server or agent was launched.
+- No operation report or real endpoint telemetry was collected.
+- Detection coverage and alert timing were not experimentally validated.
+
+A live validation would use a disposable Linux VM or container, an
+isolated network, benign discovery abilities only, and documented cleanup.

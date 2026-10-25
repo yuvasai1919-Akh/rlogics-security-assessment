@@ -1,0 +1,31 @@
+# LAB ONLY. OpenBao in DEV MODE: in-memory storage, auto-unsealed, no TLS, fixed root token.
+# Never use dev mode for anything real. Production design is in PRODUCTION_DESIGN.md.
+# Image tags: pin by digest in production. Verify dev-mode env vars against the official
+# OpenBao installation docs for the version you pull.
+services:
+  openbao:
+    image: openbao/openbao:latest
+    container_name: lab-openbao
+    cap_add: [IPC_LOCK]
+    environment:
+      BAO_DEV_ROOT_TOKEN_ID: "lab-root-token-not-a-secret"
+      BAO_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+    ports:
+      - "127.0.0.1:8200:8200"      # localhost only
+    networks: [openbao-lab]
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: lab-postgres
+    environment:
+      POSTGRES_USER: lab_admin                       # used ONLY by init.sql to create the schema and the mgmt role
+      POSTGRES_PASSWORD: "lab-admin-password-not-a-secret"
+      POSTGRES_DB: labdb
+    volumes:
+      - ./database-secrets/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "127.0.0.1:5432:5432"      # localhost only
+    networks: [openbao-lab]
+
+networks:
+  openbao-lab: {}

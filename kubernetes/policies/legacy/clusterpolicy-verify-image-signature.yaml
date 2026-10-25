@@ -1,0 +1,53 @@
+# EXAMPLE - not applied by `make k8s-policies` (lives in examples/ and needs YOUR public key).
+# Enforces that images from the lab registry carry a valid Cosign signature, by digest.
+#
+# 1) Key-based (lab): paste devsecops/signing/keys/cosign.pub below.
+# 2) Keyless (production): replace `keys` with `keyless` identity matching (see bottom of file).
+#
+# Start in Audit to observe, switch to Enforce when you trust it. Admission must fail CLOSED for
+# signature checks (failurePolicy: Fail) - a verification outage must not become "allow everything".
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signature
+spec:
+  validationFailureAction: Audit        # lab: Audit. Production: Enforce
+  webhookTimeoutSeconds: 30
+  failurePolicy: Fail
+  rules:
+    - name: verify-cosign-key
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      verifyImages:
+        - imageReferences:
+            - "lab-registry:5000/lab-app*"      # adjust to the registry your cluster can reach
+          mutateDigest: true                    # rewrite tag -> verified digest
+          verifyDigest: true
+          required: true
+          attestors:
+            - entries:
+                - keys:
+                    publicKeys: |-
+                      -----BEGIN PUBLIC KEY-----
+                      REPLACE_WITH_devsecops_signing_keys_cosign.pub_CONTENT
+                      -----END PUBLIC KEY-----
+                    # Lab only (no transparency log in the key-based lab). Production keeps tlog checks on.
+                    rekor:
+                      ignoreTlog: true
+                    ctlog:
+                      ignoreSCT: true
+
+# ---- Production (keyless) variant of the attestor --------------------------------------------
+#          attestors:
+#            - entries:
+#                - keyless:
+#                    issuer: "https://token.actions.githubusercontent.com"
+#                    subject: "https://github.com/YOUR-ORG/YOUR-REPO/.github/workflows/devsecops.yml@refs/heads/main"
+#                    rekor:
+#                      url: https://rekor.sigstore.dev
+#          # Also require attestations, e.g. an SBOM and a vulnerability-scan result:
+#          attestations:
+#            - type: https://cyclonedx.org/bom
+#              attestors: [ ...same keyless attestor... ]

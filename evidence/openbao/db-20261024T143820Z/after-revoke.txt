@@ -1,0 +1,1 @@
+psql: error: connection to server at "127.0.0.1", port 5432 failed: FATAL:  role "v-token-app-read-VSsC0mAN1R8etdSUvmV2-1792852705" does not exist

@@ -1,0 +1,22 @@
+Signing lab-registry:5000/lab-app@sha256:8e3e10a4f7e3af55b85a5d49333c0b4898059093e9539d5275344f05f92dd8e5
+Pushing signature to: lab-registry:5000/lab-app
+
+--- verify (expected: success) ---
+WARNING: Skipping tlog verification is an insecure practice that lacks of transparency and auditability verification for the signature.
+
+Verification for lab-registry:5000/lab-app@sha256:8e3e10a4f7e3af55b85a5d49333c0b4898059093e9539d5275344f05f92dd8e5 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - The signatures were verified against the specified public key
+
+[{"critical":{"identity":{"docker-reference":"lab-registry:5000/lab-app"},"image":{"docker-manifest-digest":"sha256:8e3e10a4f7e3af55b85a5d49333c0b4898059093e9539d5275344f05f92dd8e5"},"type":"cosign container image signature"},"optional":null}]
+
+--- attest SBOM (CycloneDX) ---
+Using payload from: /out/sbom.cdx.json
+
+--- tamper test (expected: verification FAILS) ---
+WARNING: Skipping tlog verification is an insecure practice that lacks of transparency and auditability verification for the signature.
+Error: no signatures found
+main.go:69: error during command execution: no signatures found
+
+Cosign lab OK: signed image verifies, tampered image is rejected.

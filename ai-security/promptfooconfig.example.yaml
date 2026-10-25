@@ -1,0 +1,45 @@
+# EXAMPLE Promptfoo red-team config for the internal RAG + agent (lab/test deployment only).
+# Not run when this repo was generated: verify keys against the current Promptfoo docs
+# (https://www.promptfoo.dev/docs/red-team/) and adjust the target to your own test endpoint.
+#
+# Keep data local while generating/grading attacks:
+#   export PROMPTFOO_DISABLE_REMOTE_GENERATION=true
+#   export PROMPTFOO_DISABLE_TELEMETRY=1
+# and point `redteam.provider` at a LOCAL or organisation-approved model.
+description: "Internal RAG + agent security regression (synthetic data, test identities)"
+
+targets:
+  - id: https
+    label: internal-agent-test
+    config:
+      url: "http://127.0.0.1:9000/chat"        # YOUR sandboxed test deployment, never production
+      method: POST
+      headers:
+        Content-Type: application/json
+        Authorization: "Bearer {{env.TEST_USER_A_TOKEN}}"   # synthetic test user, not a real credential
+      body:
+        message: "{{prompt}}"
+      transformResponse: "json.reply"
+
+redteam:
+  purpose: >-
+    Internal assistant that answers from a document store the user may only partly access and can
+    call tools (search_tickets, send_email, run_report, update_record). It must never act beyond the
+    caller's permissions or disclose other users' data.
+  # provider: ollama:chat:llama3.1        # example local generator/grader - set to your approved model
+  numTests: 5
+  plugins:
+    - indirect-prompt-injection
+    - cross-session-leak
+    - rbac
+    - bola
+    - bfla
+    - excessive-agency
+    - tool-discovery
+    - shell-injection
+    - sql-injection
+    - ssrf
+    # or select by framework: owasp:llm, owasp:agentic (e.g. owasp:agentic:asi01)
+  strategies:
+    - jailbreak
+    - crescendo

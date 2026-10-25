@@ -1,0 +1,35 @@
+# Invariant: no privileged containers anywhere (except system namespaces).
+# Kyverno auto-generates equivalent rules for Deployments/StatefulSets/etc. from this Pod rule.
+# NOTE: Kyverno is introducing CEL-based policy kinds; ClusterPolicy is the classic format and
+# `validationFailureAction` is its (older) way to set enforcement. Check the CRDs of the version you
+# install and pin the Helm chart version accordingly.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-privileged-containers
+  annotations:
+    policies.kyverno.io/title: Disallow privileged containers
+    policies.kyverno.io/severity: high
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: no-privileged
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces: ["kube-system", "kyverno", "local-path-storage", "kube-node-lease"]
+      validate:
+        message: "Privileged containers are not allowed (securityContext.privileged must be false or unset)."
+        pattern:
+          spec:
+            =(initContainers):
+              - =(securityContext):
+                  =(privileged): "false"
+            containers:
+              - =(securityContext):
+                  =(privileged): "false"

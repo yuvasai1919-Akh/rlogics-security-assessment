@@ -1,0 +1,8 @@
+[
+  {
+    "id": "CVE-2099-0001",
+    "reason": "SYNTHETIC: vulnerable function not reachable; WAF rule deployed as compensating control",
+    "approved_by": "service-owner + security-lead (synthetic)",
+    "expires": "2099-12-31"
+  }
+]

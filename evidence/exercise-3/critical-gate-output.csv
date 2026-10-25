@@ -1,0 +1,4 @@
+decision,kind,id,severity,package,installed,fixed,target,reason,title
+BLOCK,vulnerability,CVE-2099-0001,CRITICAL,examplelib,1.0.0,1.0.5,requirements.txt,CRITICAL with fix 1.0.5,SYNTHETIC critical with a fix
+WARN,vulnerability,CVE-2099-0002,HIGH,otherlib,2.1.0,2.1.9,requirements.txt,HIGH with fix 2.1.9,SYNTHETIC high with a fix
+WARN,vulnerability,CVE-2099-0003,MEDIUM,midlib,0.9.0,,requirements.txt,MEDIUM,"SYNTHETIC medium, no fix"

@@ -1,0 +1,24 @@
+# Namespace-level guardrails: a mistake or compromise in this namespace cannot starve the node.
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: assessment-quota
+  namespace: assessment
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 512Mi
+    limits.cpu: "2"
+    limits.memory: 1Gi
+    pods: "10"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: assessment-defaults
+  namespace: assessment
+spec:
+  limits:
+    - type: Container
+      default: { cpu: 200m, memory: 128Mi }
+      defaultRequest: { cpu: 50m, memory: 64Mi }

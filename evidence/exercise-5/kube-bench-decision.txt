@@ -1,0 +1,15 @@
+Kubernetes CIS benchmark (kube-bench)
+Status: Not performed.
+
+Reason:
+- kube-bench is not installed on PATH.
+- No kube-bench Job manifest was found in the project.
+- Project review notes identify kube-bench as optional in a local kind cluster.
+- kind uses a containerized node and managed control plane, so results may
+  include N/A checks or findings that are not representative of production.
+- The kube-bench Job requires privileged host access.
+
+Limitation:
+This project does not claim a kube-bench scan or CIS benchmark compliance.
+For meaningful assurance, run the distribution-appropriate benchmark on
+representative cluster nodes and review each result.

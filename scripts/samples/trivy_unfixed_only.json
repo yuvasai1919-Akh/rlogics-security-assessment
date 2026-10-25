@@ -1,0 +1,17 @@
+{
+  "SchemaVersion": 2,
+  "ArtifactName": "lab-app:unfixed-only",
+  "Results": [
+    {
+      "Target": "debian 12",
+      "Class": "os-pkgs",
+      "Type": "debian",
+      "Vulnerabilities": [
+        {"VulnerabilityID": "CVE-2099-1001", "PkgName": "libfoo", "InstalledVersion": "1.2",
+         "Severity": "CRITICAL", "Title": "SYNTHETIC critical, vendor has not shipped a fix"},
+        {"VulnerabilityID": "CVE-2099-1002", "PkgName": "libbar", "InstalledVersion": "3.4",
+         "FixedVersion": "", "Severity": "HIGH", "Title": "SYNTHETIC high, no fix"}
+      ]
+    }
+  ]
+}

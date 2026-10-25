@@ -1,0 +1,8 @@
+[
+  {
+    "id": "CVE-2099-0001",
+    "reason": "SYNTHETIC: exception that has already expired",
+    "approved_by": "service-owner + security-lead (synthetic)",
+    "expires": "2020-01-31"
+  }
+]

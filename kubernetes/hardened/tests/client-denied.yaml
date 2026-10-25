@@ -1,0 +1,26 @@
+# NetworkPolicy test client WITHOUT the allowing label (expected: blocked).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: np-client-denied
+  namespace: assessment
+  labels:
+    role: np-test
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile: { type: RuntimeDefault }
+  containers:
+    - name: c
+      image: busybox:1.36
+      command: ["sh", "-c", "wget -q -O /dev/null -T 3 http://WEB_IP:8080/ && echo RESULT=ALLOWED || echo RESULT=BLOCKED"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: { drop: ["ALL"] }
+      resources:
+        requests: { cpu: 10m, memory: 16Mi }
+        limits: { cpu: 50m, memory: 32Mi }

@@ -1,0 +1,24 @@
+# Generated at runtime - synthetic lab secret, never commit
+devsecops/app-or-lab-target/leaked_config.py
+
+# Signing private key (public key MAY be committed)
+devsecops/signing/keys/cosign.key
+
+# Raw run output is large; commit only curated samples under evidence/curated/
+evidence/runs/
+
+# Python / editor
+__pycache__/
+*.pyc
+.venv/
+.idea/
+.vscode/
+*.swp
+
+# Never commit real secrets
+.env
+*.pem
+*.key
+!kubernetes/**/*.example.key
+*.bak
+*.backup

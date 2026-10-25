@@ -1,0 +1,9 @@
+Key             Value
+---             -----
+expire_time     2026-10-24T14:43:25.472595503Z
+id              database/creds/app-readonly/Ti2HohHu8IPjAsLdLceWsLEC
+issue_time      2026-10-24T14:38:25.472595103Z
+last_renewal    <nil>
+path            database/creds/app-readonly
+renewable       true
+ttl             4m58s

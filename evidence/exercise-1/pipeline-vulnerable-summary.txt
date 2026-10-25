@@ -1,0 +1,7 @@
+FAIL  SAST (Semgrep) (exit 1)
+FAIL  SCA+secrets+misconfig fs (exit 1)
+PASS  Build image
+FAIL  Image scan + gate (exit 1)
+PASS  SBOM (CycloneDX+SPDX)
+PASS  DAST baseline (ZAP)
+FAIL  Sign + verify (Cosign) (exit 1)

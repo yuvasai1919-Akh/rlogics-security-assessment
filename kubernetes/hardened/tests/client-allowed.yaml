@@ -1,0 +1,29 @@
+# NetworkPolicy test client WITH the allowing label (expected: ALLOWED).
+# Restricted-PSA compliant so it can run in the namespace. WEB_IP is replaced by the script with a
+# web pod IP. Egress is opened for test pods by np-test-egress.yaml (see that file for why).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: np-client-allowed
+  namespace: assessment
+  labels:
+    access: assessment-web
+    role: np-test
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile: { type: RuntimeDefault }
+  containers:
+    - name: c
+      image: busybox:1.36
+      command: ["sh", "-c", "wget -q -O /dev/null -T 3 http://WEB_IP:8080/ && echo RESULT=ALLOWED || echo RESULT=BLOCKED"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: { drop: ["ALL"] }
+      resources:
+        requests: { cpu: 10m, memory: 16Mi }
+        limits: { cpu: 50m, memory: 32Mi }

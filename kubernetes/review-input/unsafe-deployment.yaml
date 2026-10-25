@@ -1,0 +1,37 @@
+# ============================================================================
+# STATIC REVIEW INPUT ONLY - INTENTIONALLY UNSAFE - DO NOT APPLY TO ANY CLUSTER
+# Provided by the assessment brief. Used for code review and static scanning only.
+# The hardened replacement lives in ../hardened/. No script in this repo applies this file.
+# ============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assessment-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assessment-web
+  template:
+    metadata:
+      labels:
+        app: assessment-web
+    spec:
+      hostNetwork: true
+      serviceAccountName: default
+      containers:
+        - name: web
+          image: nginx:latest
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          env:
+            - name: DEMO_PASSWORD
+              value: "assessment-only-not-a-real-secret"
+          volumeMounts:
+            - name: host-root
+              mountPath: /host
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /

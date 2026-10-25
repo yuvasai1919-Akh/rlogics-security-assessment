@@ -1,0 +1,12 @@
+# UNSAFE TEST OBJECT - no runAsNonRoot declared (runs as the image default). Used with --dry-run=server only.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-root
+  namespace: policy-demo
+spec:
+  containers:
+    - name: c
+      image: nginxinc/nginx-unprivileged:1.27-alpine
+      securityContext:
+        runAsUser: 0

@@ -1,0 +1,228 @@
+
+Report Summary
+
+┌────────────────────────┬────────────┬───────────────────┐
+│         Target         │    Type    │ Misconfigurations │
+├────────────────────────┼────────────┼───────────────────┤
+│ unsafe-deployment.yaml │ kubernetes │        10         │
+└────────────────────────┴────────────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+unsafe-deployment.yaml (kubernetes)
+===================================
+Tests: 38 (SUCCESSES: 28, FAILURES: 10)
+Failures: 10 (MEDIUM: 5, HIGH: 5, CRITICAL: 0)
+
+KSV-0001 (MEDIUM): Container 'web' of Deployment 'assessment-web' should set 'securityContext.allowPrivilegeEscalation' to false
+════════════════════════════════════════
+A program inside the container can elevate its own privileges and run as root, which might give the program control over the container and node.
+
+See https://avd.aquasec.com/misconfig/ksv-0001
+────────────────────────────────────────
+ unsafe-deployment.yaml:23-33
+────────────────────────────────────────
+  23 ┌         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 │             runAsUser: 0
+  28 │           env:
+  29 │             - name: DEMO_PASSWORD
+  30 │               value: "assessment-only-not-a-real-secret"
+  31 └           volumeMounts:
+  ..   
+────────────────────────────────────────
+
+
+KSV-0009 (HIGH): Deployment 'assessment-web' should not set 'spec.template.spec.hostNetwork' to true
+════════════════════════════════════════
+Sharing the host’s network namespace permits processes in the pod to communicate with processes bound to the host’s loopback adapter.
+
+See https://avd.aquasec.com/misconfig/ksv-0009
+────────────────────────────────────────
+ unsafe-deployment.yaml:10-37
+────────────────────────────────────────
+  10 ┌ spec:
+  11 │   replicas: 1
+  12 │   selector:
+  13 │     matchLabels:
+  14 │       app: assessment-web
+  15 │   template:
+  16 │     metadata:
+  17 │       labels:
+  18 └         app: assessment-web
+  ..   
+────────────────────────────────────────
+
+
+KSV-0012 (MEDIUM): Container 'web' of Deployment 'assessment-web' should set 'securityContext.runAsNonRoot' to true
+════════════════════════════════════════
+Force the running image to run as a non-root user to ensure least privileges.
+
+See https://avd.aquasec.com/misconfig/ksv-0012
+────────────────────────────────────────
+ unsafe-deployment.yaml:23-33
+────────────────────────────────────────
+  23 ┌         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 │             runAsUser: 0
+  28 │           env:
+  29 │             - name: DEMO_PASSWORD
+  30 │               value: "assessment-only-not-a-real-secret"
+  31 └           volumeMounts:
+  ..   
+────────────────────────────────────────
+
+
+KSV-0013 (MEDIUM): Container 'web' of Deployment 'assessment-web' should specify an image tag
+════════════════════════════════════════
+It is best to avoid using the ':latest' image tag when deploying containers in production. Doing so makes it hard to track which version of the image is running, and hard to roll back the version.
+
+See https://avd.aquasec.com/misconfig/ksv-0013
+────────────────────────────────────────
+ unsafe-deployment.yaml:23-33
+────────────────────────────────────────
+  23 ┌         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 │             runAsUser: 0
+  28 │           env:
+  29 │             - name: DEMO_PASSWORD
+  30 │               value: "assessment-only-not-a-real-secret"
+  31 └           volumeMounts:
+  ..   
+────────────────────────────────────────
+
+
+KSV-0014 (HIGH): Container 'web' of Deployment 'assessment-web' should set 'securityContext.readOnlyRootFilesystem' to true
+════════════════════════════════════════
+An immutable root file system prevents applications from writing to their local disk. This can limit intrusions, as attackers will not be able to tamper with the file system or write foreign executables to disk.
+
+See https://avd.aquasec.com/misconfig/ksv-0014
+────────────────────────────────────────
+ unsafe-deployment.yaml:23-33
+────────────────────────────────────────
+  23 ┌         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 │             runAsUser: 0
+  28 │           env:
+  29 │             - name: DEMO_PASSWORD
+  30 │               value: "assessment-only-not-a-real-secret"
+  31 └           volumeMounts:
+  ..   
+────────────────────────────────────────
+
+
+KSV-0017 (HIGH): Container 'web' of Deployment 'assessment-web' should set 'securityContext.privileged' to false
+════════════════════════════════════════
+Privileged containers share namespaces with the host system and do not offer any security. They should be used exclusively for system containers that require high privileges.
+
+See https://avd.aquasec.com/misconfig/ksv-0017
+────────────────────────────────────────
+ unsafe-deployment.yaml:23-33
+────────────────────────────────────────
+  23 ┌         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 │             runAsUser: 0
+  28 │           env:
+  29 │             - name: DEMO_PASSWORD
+  30 │               value: "assessment-only-not-a-real-secret"
+  31 └           volumeMounts:
+  ..   
+────────────────────────────────────────
+
+
+KSV-0023 (MEDIUM): Deployment 'assessment-web' should not set 'spec.template.volumes.hostPath'
+════════════════════════════════════════
+According to pod security standard 'HostPath Volumes', HostPath volumes must be forbidden.
+
+See https://avd.aquasec.com/misconfig/ksv-0023
+────────────────────────────────────────
+ unsafe-deployment.yaml:10-37
+────────────────────────────────────────
+  10 ┌ spec:
+  11 │   replicas: 1
+  12 │   selector:
+  13 │     matchLabels:
+  14 │       app: assessment-web
+  15 │   template:
+  16 │     metadata:
+  17 │       labels:
+  18 └         app: assessment-web
+  ..   
+────────────────────────────────────────
+
+
+KSV-0104 (MEDIUM): container "web" of deployment "assessment-web" in "default" namespace should specify a seccomp profile
+════════════════════════════════════════
+A program inside the container can bypass Seccomp protection policies.
+
+See https://avd.aquasec.com/misconfig/ksv-0104
+────────────────────────────────────────
+ unsafe-deployment.yaml:23-33
+────────────────────────────────────────
+  23 ┌         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 │             runAsUser: 0
+  28 │           env:
+  29 │             - name: DEMO_PASSWORD
+  30 │               value: "assessment-only-not-a-real-secret"
+  31 └           volumeMounts:
+  ..   
+────────────────────────────────────────
+
+
+KSV-0118 (HIGH): deployment assessment-web in default namespace is using the default security context, which allows root privileges
+════════════════════════════════════════
+Security context controls the allocation of security parameters for the pod/container/volume, ensuring the appropriate level of protection. Relying on default security context may expose vulnerabilities to potential attacks that rely on privileged access.
+
+See https://avd.aquasec.com/misconfig/ksv-0118
+────────────────────────────────────────
+ unsafe-deployment.yaml:19-37
+────────────────────────────────────────
+  19 ┌     spec:
+  20 │       hostNetwork: true
+  21 │       serviceAccountName: default
+  22 │       containers:
+  23 │         - name: web
+  24 │           image: nginx:latest
+  25 │           securityContext:
+  26 │             privileged: true
+  27 └             runAsUser: 0
+  ..   
+────────────────────────────────────────
+
+
+KSV-0121 (HIGH): deployment assessment-web in default namespace shouldn't have volumes set to {"/"}
+════════════════════════════════════════
+HostPath present many security risks and as a security practice it is better to avoid critical host paths mounts.
+
+See https://avd.aquasec.com/misconfig/ksv-0121
+────────────────────────────────────────
+ unsafe-deployment.yaml:10-37
+────────────────────────────────────────
+  10 ┌ spec:
+  11 │   replicas: 1
+  12 │   selector:
+  13 │     matchLabels:
+  14 │       app: assessment-web
+  15 │   template:
+  16 │     metadata:
+  17 │       labels:
+  18 └         app: assessment-web
+  ..   
+────────────────────────────────────────
+
+

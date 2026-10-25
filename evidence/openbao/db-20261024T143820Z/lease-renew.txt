@@ -1,0 +1,5 @@
+Key                Value
+---                -----
+lease_id           database/creds/app-readonly/Ti2HohHu8IPjAsLdLceWsLEC
+lease_duration     10m
+lease_renewable    true

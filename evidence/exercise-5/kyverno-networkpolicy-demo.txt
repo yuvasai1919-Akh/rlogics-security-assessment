@@ -1,0 +1,13 @@
+--- privileged container (expect: deny) ---
+Error from server: error when creating "/mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/kubernetes/policies/tests/bad-pod-privileged.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy disallow-privileged-containers failed: Privileged containers are not allowed (securityContext.privileged must be false or unset).; Policy require-run-as-nonroot failed: Containers must run as non-root: set securityContext.runAsNonRoot: true (pod or container level).
+=> DENIED as expected
+
+--- runs as root (expect: deny) ---
+Error from server: error when creating "/mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/kubernetes/policies/tests/bad-pod-root.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy require-run-as-nonroot failed: Containers must run as non-root: set securityContext.runAsNonRoot: true (pod or container level).
+=> DENIED as expected
+
+--- compliant hardened pod (expect: allow) ---
+pod/good-pod created (server dry run)
+=> ADMITTED as expected
+
+Summary: 3 expected, 0 unexpected

@@ -1,0 +1,2 @@
+NAME                        STATUS   ROLES           AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION                      CONTAINER-RUNTIME
+rlogics-lab-control-plane   Ready    control-plane   6h38m   v1.34.0   172.19.0.2    <none>        Debian GNU/Linux 12 (bookworm)   6.18.54.1-microsoft-standard-WSL2   containerd://2.1.3

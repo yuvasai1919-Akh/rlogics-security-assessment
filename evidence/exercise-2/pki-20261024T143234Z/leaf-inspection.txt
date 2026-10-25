@@ -1,0 +1,11 @@
+subject=CN=app-a.svc.lab.internal
+issuer=CN=RLogics Lab Intermediate CA (synthetic)
+serial=2ED0575ED1653D2BAE22C0315153382574BA8586
+notBefore=Oct 24 14:32:15 2026 GMT
+notAfter=Oct 24 14:47:45 2026 GMT
+X509v3 Key Usage: critical
+    Digital Signature, Key Encipherment, Key Agreement
+X509v3 Extended Key Usage: 
+    TLS Web Server Authentication
+X509v3 Subject Alternative Name: 
+    DNS:app-a.svc.lab.internal

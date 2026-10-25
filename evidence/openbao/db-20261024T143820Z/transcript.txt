@@ -1,0 +1,60 @@
+
+=== Wait for PostgreSQL ===
+
+=== 1. Enable the database engine and configure the connection with the DEDICATED mgmt account ===
+configured (sslmode=disable is a LAB shortcut; production requires verify-full TLS)
+
+=== 2. Define roles that generate TIME-LIMITED, read-only credentials ===
+Key                      Value
+---                      -----
+creation_statements      [CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO "{{name}}"; GRANT USAGE ON SCHEMA public TO "{{name}}";]
+credential_type          password
+db_name                  lab-postgres
+default_ttl              5m
+max_ttl                  15m
+renew_statements         []
+revocation_statements    []
+rollback_statements      []
+
+=== 3. Request a dynamic credential (observe username, lease_id, lease_duration) ===
+username      : v-token-app-read-VSsC0mAN1R8etdSUvmV2-1792852705
+lease_id      : database/creds/app-readonly/Ti2HohHu8IPjAsLdLceWsLEC
+lease_duration: 300s
+
+=== 4. PERMITTED action: SELECT with the dynamic credential ===
+3
+
+=== 5. DENIED action: INSERT (role was granted SELECT only) ===
+ERROR:  permission denied for table orders
+
+=== 6. Lease inspection and renewal ===
+Key             Value
+---             -----
+expire_time     2026-10-24T14:43:25.472595503Z
+id              database/creds/app-readonly/Ti2HohHu8IPjAsLdLceWsLEC
+issue_time      2026-10-24T14:38:25.472595103Z
+last_renewal    <nil>
+path            database/creds/app-readonly
+renewable       true
+ttl             4m58s
+Key                Value
+---                -----
+lease_id           database/creds/app-readonly/Ti2HohHu8IPjAsLdLceWsLEC
+lease_duration     10m
+lease_renewable    true
+
+=== 7. Explicit revocation: credential stops working immediately ===
+All revocation operations queued successfully!
+psql: error: connection to server at "127.0.0.1", port 5432 failed: FATAL:  role "v-token-app-read-VSsC0mAN1R8etdSUvmV2-1792852705" does not exist
+(login rejected as expected)
+
+=== 8. Natural expiry: 20-second credential, poll until login fails ===
+issued v-token-app-shor-EOAeIhQ1tVwhSKrAMqvb-1792852711 with a 20s TTL
+works while the lease is valid
+credential rejected after ~20s - lease expired and role was dropped
+expired_naturally=1
+
+=== 9. Roles still present in PostgreSQL (should not contain the dynamic users anymore) ===
+
+=== Done ===
+Evidence directory: evidence/openbao/db-20261024T143820Z

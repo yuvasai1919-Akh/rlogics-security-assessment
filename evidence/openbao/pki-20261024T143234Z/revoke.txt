@@ -1,0 +1,5 @@
+Key                        Value
+---                        -----
+revocation_time            1792852368
+revocation_time_rfc3339    2026-10-24T14:32:48.12055127Z
+state                      revoked

@@ -1,0 +1,14 @@
+# UNSAFE TEST OBJECT - privileged container. Only ever used with `kubectl apply --dry-run=server`,
+# which asks the API server and admission webhooks for a verdict WITHOUT persisting anything.
+# Deliberately contains no hostPath/hostNetwork so even a mistaken apply is the least harmful variant.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-privileged
+  namespace: policy-demo
+spec:
+  containers:
+    - name: c
+      image: nginxinc/nginx-unprivileged:1.27-alpine
+      securityContext:
+        privileged: true

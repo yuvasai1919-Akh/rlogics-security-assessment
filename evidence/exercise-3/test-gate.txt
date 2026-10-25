@@ -1,0 +1,18 @@
+test_active_exception_downgrades_to_excepted (test_scan_gate.ScanGateTests.test_active_exception_downgrades_to_excepted) ... ok
+test_clean_report_passes (test_scan_gate.ScanGateTests.test_clean_report_passes) ... ok
+test_critical_with_fix_fails (test_scan_gate.ScanGateTests.test_critical_with_fix_fails) ... ok
+test_csv_and_markdown_outputs_written (test_scan_gate.ScanGateTests.test_csv_and_markdown_outputs_written) ... ok
+test_exception_missing_required_fields_is_input_error (test_scan_gate.ScanGateTests.test_exception_missing_required_fields_is_input_error) ... ok
+test_expired_exception_is_enforced_again (test_scan_gate.ScanGateTests.test_expired_exception_is_enforced_again) ... ok
+test_malformed_json_is_input_error_not_a_pass (test_scan_gate.ScanGateTests.test_malformed_json_is_input_error_not_a_pass) ... ok
+test_missing_file_is_input_error (test_scan_gate.ScanGateTests.test_missing_file_is_input_error) ... ok
+test_non_trivy_json_is_input_error (test_scan_gate.ScanGateTests.test_non_trivy_json_is_input_error) ... ok
+test_secret_blocks_and_value_is_not_printed (test_scan_gate.ScanGateTests.test_secret_blocks_and_value_is_not_printed) ... ok
+test_threshold_is_configurable (test_scan_gate.ScanGateTests.test_threshold_is_configurable) ... ok
+test_unfixed_critical_blocks_when_policy_says_so (test_scan_gate.ScanGateTests.test_unfixed_critical_blocks_when_policy_says_so) ... ok
+test_unfixed_critical_does_not_block_by_default (test_scan_gate.ScanGateTests.test_unfixed_critical_does_not_block_by_default) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.350s
+
+OK

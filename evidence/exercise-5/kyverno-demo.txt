@@ -1,0 +1,17 @@
+--- privileged container (expect: deny) ---
+Error from server: error when creating "/mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/kubernetes/policies/tests/bad-pod-privileged.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy disallow-privileged-containers failed: Privileged containers are not allowed (securityContext.privileged must be false or unset).; Policy require-run-as-nonroot failed: Containers must run as non-root: set securityContext.runAsNonRoot: true (pod or container level).
+=> DENIED as expected
+
+--- runs as root (expect: deny) ---
+Error from server: error when creating "/mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/kubernetes/policies/tests/bad-pod-root.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy require-run-as-nonroot failed: Containers must run as non-root: set securityContext.runAsNonRoot: true (pod or container level).
+=> DENIED as expected
+
+--- compliant hardened pod (expect: allow) ---
+pod/good-pod created (server dry run)
+=> ADMITTED as expected
+
+--- privileged pod in PSA-restricted namespace 'assessment' (built-in layer) (expect: deny) ---
+Error from server (Forbidden): error when creating "/tmp/tmp.cKHqaPy7o0": pods "bad-privileged" is forbidden: violates PodSecurity "restricted:latest": privileged (container "c" must not set securityContext.privileged=true), allowPrivilegeEscalation != false (container "c" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "c" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "c" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "c" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+=> DENIED as expected
+
+Summary: 4 expected, 0 unexpected

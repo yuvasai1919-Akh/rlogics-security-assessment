@@ -1,0 +1,127 @@
+
+=== 1. Root CA (mount: pki). In production the root is OFFLINE; here it is in-memory dev mode. ===
+WARNING! The following warnings were returned from OpenBao:
+
+  * This mount hasn't configured any authority information access (AIA)
+  fields; this may make it harder for systems to find missing certificates
+  in the chain or to validate revocation status of certificates. Consider
+  updating /config/urls or the newly generated issuer with this information.
+
+root CA written to /mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/evidence/openbao/pki-20261024T143234Z/root-ca.crt
+
+=== 2. Intermediate CA (mount: pki_int), signed by the root ===
+WARNING! The following warnings were returned from OpenBao:
+
+  * This mount hasn't configured any authority information access (AIA)
+  fields; this may make it harder for systems to find missing certificates
+  in the chain or to validate revocation status of certificates. Consider
+  updating /config/urls or the newly generated issuer with this information.
+
+
+=== 3. Roles: one per app, constrained to that app's own name (no allow_any_name, no wildcards) ===
+Key                                   Value
+---                                   -----
+allow_any_name                        false
+allow_bare_domains                    true
+allow_glob_domains                    false
+allow_globs_in_identity_templates     false
+allow_ip_sans                         false
+allow_localhost                       true
+allow_subdomains                      false
+allow_token_displayname               false
+allow_wildcard_certificates           true
+allowed_domains                       [app-a.svc.lab.internal]
+allowed_domains_template              false
+allowed_ip_sans_cidr                  []
+allowed_other_sans                    []
+allowed_serial_numbers                []
+allowed_uri_sans                      []
+allowed_uri_sans_template             false
+allowed_user_ids                      []
+basic_constraints_valid_for_non_ca    false
+client_flag                           false
+cn_validations                        [email hostname]
+code_signing_flag                     false
+country                               []
+email_protection_flag                 false
+enforce_hostnames                     true
+ext_key_usage                         []
+ext_key_usage_oids                    []
+generate_lease                        false
+issuer_ref                            default
+key_bits                              256
+key_type                              ec
+key_usage                             [DigitalSignature KeyAgreement KeyEncipherment]
+locality                              []
+max_ttl                               1h
+no_store                              false
+not_after                             n/a
+not_after_bound                       permit
+not_before                            n/a
+not_before_bound                      permit
+not_before_duration                   30s
+organization                          []
+ou                                    []
+policy_identifiers                    []
+postal_code                           []
+province                              []
+require_cn                            true
+server_flag                           true
+signature_bits                        0
+street_address                        []
+ttl                                   15m
+use_csr_common_name                   true
+use_csr_sans                          true
+use_pss                               false
+
+=== 4. Policy + token scoped to ONE role path (stands in for workload identity) ===
+
+=== 5. Issue a short-lived cert for app-a using app-a's token ===
+serial: 2e:d0:57:5e:d1:65:3d:2b:ae:22:c0:31:51:53:38:25:74:ba:85:86   lease: 0s
+
+=== 6. Inspect subject / SAN / issuer / validity (expect ~15 minutes, issuer = intermediate) ===
+subject=CN=app-a.svc.lab.internal
+issuer=CN=RLogics Lab Intermediate CA (synthetic)
+serial=2ED0575ED1653D2BAE22C0315153382574BA8586
+notBefore=Oct 24 14:32:15 2026 GMT
+notAfter=Oct 24 14:47:45 2026 GMT
+X509v3 Key Usage: critical
+    Digital Signature, Key Encipherment, Key Agreement
+X509v3 Extended Key Usage: 
+    TLS Web Server Authentication
+X509v3 Subject Alternative Name: 
+    DNS:app-a.svc.lab.internal
+
+=== 7. Verify chain: leaf -> intermediate -> root ===
+/mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/evidence/openbao/pki-20261024T143234Z/leaf.crt: OK
+
+=== 8. NEGATIVE: app-a token asks for app-b's name through app-a's role (expect role-constraint error) ===
+Error writing data to pki_int/issue/app-a: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/pki_int/issue/app-a
+Code: 400. Errors:
+
+* common name app-b.svc.lab.internal not allowed by this role
+
+=== 9. NEGATIVE: app-a token tries app-b's role path (expect permission denied) ===
+Error writing data to pki_int/issue/app-b: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/pki_int/issue/app-b
+Code: 403. Errors:
+
+* 1 error occurred:
+	* permission denied
+
+
+
+=== 10. Revocation and CRL (short TTLs reduce reliance on this, they do not remove it) ===
+Key                        Value
+---                        -----
+revocation_time            1792852368
+revocation_time_rfc3339    2026-10-24T14:32:48.12055127Z
+state                      revoked
+CRL fetched: /mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/evidence/openbao/pki-20261024T143234Z/crl.pem
+
+=== Done ===
+Evidence directory: evidence/openbao/pki-20261024T143234Z
+Next: read openbao/PRODUCTION_DESIGN.md and be ready to explain the delta.

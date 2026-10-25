@@ -1,0 +1,39 @@
+# Invariant: no privileged containers (system namespaces excluded so cluster components are not bricked).
+#
+# FORMAT NOTE (verified Oct 2026): Kyverno deprecated ClusterPolicy in 1.17 and plans to REMOVE it in
+# v1.20 (scheduled around Oct/Nov 2026). This file uses the replacement CEL-based ValidatingPolicy
+# (policies.kyverno.io/v1). Legacy ClusterPolicy equivalents live in policies/legacy/ for Kyverno <= 1.19.
+#
+# NOT TESTED against a live cluster when this repo was generated. If apply fails, run
+#   kubectl explain validatingpolicies.spec.matchConstraints
+# and adjust field names for your installed Kyverno version.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: disallow-privileged-containers
+  annotations:
+    policies.kyverno.io/title: Disallow privileged containers
+    policies.kyverno.io/severity: high
+spec:
+  validationActions:
+    - Deny                         # use Audit first in a real rollout, then Deny
+  matchConstraints:
+    namespaceSelector:             # standard Kubernetes MatchResources field - confirm with kubectl explain
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: ["kube-system", "kyverno", "local-path-storage", "kube-node-lease"]
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    - message: "Privileged containers are not allowed (securityContext.privileged must be false or unset)."
+      expression: >-
+        object.spec.containers.all(c,
+          !has(c.securityContext) || !has(c.securityContext.privileged) || !c.securityContext.privileged)
+    - message: "Privileged init containers are not allowed."
+      expression: >-
+        !has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          !has(c.securityContext) || !has(c.securityContext.privileged) || !c.securityContext.privileged)

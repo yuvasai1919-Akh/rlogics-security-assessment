@@ -1,0 +1,6 @@
+Error writing data to pki_int/issue/app-a: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/pki_int/issue/app-a
+Code: 400. Errors:
+
+* common name app-b.svc.lab.internal not allowed by this role

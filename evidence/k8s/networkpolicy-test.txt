@@ -1,0 +1,11 @@
+deployment "assessment-web" successfully rolled out
+web pod IP: 10.244.0.10
+
+--- client WITH label access=assessment-web ---
+RESULT=ALLOWED
+
+--- client WITHOUT the label ---
+wget: download timed out
+RESULT=BLOCKED
+
+Expected: first RESULT=ALLOWED, second RESULT=BLOCKED.

@@ -1,0 +1,33 @@
+# Invariant: every container must effectively run with runAsNonRoot: true.
+# "Effective" = the container-level value if set, otherwise the pod-level value. A container that sets
+# runAsNonRoot: false overrides a pod-level true and is therefore denied.
+# See the format note and the "not tested against a live cluster" caveat in disallow-privileged.yaml.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-run-as-nonroot
+  annotations:
+    policies.kyverno.io/title: Require runAsNonRoot
+    policies.kyverno.io/severity: high
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: ["kube-system", "kyverno", "local-path-storage", "kube-node-lease"]
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    - message: "Containers must run as non-root: set securityContext.runAsNonRoot: true (pod or container level)."
+      expression: >-
+        object.spec.containers.all(c,
+          (has(c.securityContext) && has(c.securityContext.runAsNonRoot))
+            ? c.securityContext.runAsNonRoot
+            : (has(object.spec.securityContext) && has(object.spec.securityContext.runAsNonRoot)
+               && object.spec.securityContext.runAsNonRoot))

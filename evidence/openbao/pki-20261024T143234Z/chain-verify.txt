@@ -1,0 +1,1 @@
+/mnt/c/Users/Admin/Downloads/rlogics-security-assessment/rlogics-security-assessment/evidence/openbao/pki-20261024T143234Z/leaf.crt: OK

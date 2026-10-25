@@ -1,0 +1,55 @@
+
+Report Summary
+
+┌───────────────────────────┬────────────┬───────────────────┐
+│          Target           │    Type    │ Misconfigurations │
+├───────────────────────────┼────────────┼───────────────────┤
+│ 00-namespace.yaml         │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ 10-rbac.yaml              │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ 20-quota-limits.yaml      │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ 30-deployment.yaml        │ kubernetes │         1         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ 40-service.yaml           │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ 50-networkpolicy.yaml     │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ tests/client-allowed.yaml │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ tests/client-denied.yaml  │ kubernetes │         0         │
+├───────────────────────────┼────────────┼───────────────────┤
+│ tests/np-test-egress.yaml │ kubernetes │         0         │
+└───────────────────────────┴────────────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+30-deployment.yaml (kubernetes)
+===============================
+Tests: 54 (SUCCESSES: 53, FAILURES: 1)
+Failures: 1 (MEDIUM: 1, HIGH: 0, CRITICAL: 0)
+
+KSV-0125 (MEDIUM): Container web in deployment assessment-web (namespace: assessment) uses an image from an untrusted registry.
+════════════════════════════════════════
+Ensure that all containers use images only from trusted registry domains.
+
+See https://avd.aquasec.com/misconfig/ksv-0125
+────────────────────────────────────────
+ 30-deployment.yaml:34-61
+────────────────────────────────────────
+  34 ┌         - name: web
+  35 │           image: nginxinc/nginx-unprivileged:1.27-alpine
+  36 │           imagePullPolicy: IfNotPresent
+  37 │           ports:
+  38 │             - name: http
+  39 │               containerPort: 8080
+  40 │           securityContext:
+  41 │             allowPrivilegeEscalation: false
+  42 └             privileged: false
+  ..   
+────────────────────────────────────────
+
+

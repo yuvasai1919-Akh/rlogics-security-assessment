@@ -1,0 +1,85 @@
+# Hardened replacement for the unsafe review input.
+# Image: nginx-unprivileged listens on 8080 as UID 101, so no root and no NET_BIND_SERVICE needed.
+# Pin by DIGEST for real deployments: run `PIN_DIGEST=1 make k8s-deploy` (see deploy_hardened.sh),
+# which resolves the digest and substitutes it. A tag is a mutable pointer; a digest is not.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assessment-web
+  namespace: assessment
+  labels:
+    app: assessment-web
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: assessment-web
+  template:
+    metadata:
+      labels:
+        app: assessment-web
+    spec:
+      serviceAccountName: assessment-web
+      automountServiceAccountToken: false
+      # no hostNetwork / hostPID / hostIPC / hostPath
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: nginxinc/nginx-unprivileged:1.27-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 200m, memory: 128Mi }
+          readinessProbe:
+            httpGet: { path: /, port: http }
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }                 # nginx writes pid/temp files here
+            - { name: nginx-cache, mountPath: /var/cache/nginx }
+            - { name: demo-secret, mountPath: /etc/assessment-secret, readOnly: true }
+      volumes:
+        - name: tmp
+          emptyDir: { sizeLimit: 16Mi }
+        - name: nginx-cache
+          emptyDir: { sizeLimit: 32Mi }
+        # Secret mounted as a read-only FILE (not an env var: env leaks via /proc, crash dumps,
+        # `kubectl describe`, child processes). Created by deploy_hardened.sh from a synthetic value.
+        # Production: source it from OpenBao (agent/CSI/operator), not from a Kubernetes Secret
+        # that is merely base64-encoded in etcd.
+        - name: demo-secret
+          secret:
+            secretName: assessment-web-demo
+            defaultMode: 0440
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: assessment-web
+  namespace: assessment
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: assessment-web
