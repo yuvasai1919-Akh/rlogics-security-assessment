@@ -79,11 +79,19 @@ jobs:
           docker build --pull -t lab-app:ci devsecops/remediated
           docker run -d --name lab-app --network lab-net lab-app:ci
           sleep 5
-      - name: ZAP baseline (passive) against remediated app
+            - name: ZAP baseline (passive) against remediated app
         run: |
           mkdir -p out && chmod 777 out
+          set +e
           docker run --rm --network lab-net -v "$PWD/out:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py -t http://lab-app:8000 -J zap-baseline.json -r zap-baseline.html || [ $? -eq 1 ]
+            zap-baseline.py -t http://lab-app:8000 -J zap-baseline.json -r zap-baseline.html
+          zap_status=$?
+          echo "ZAP baseline exit code: $zap_status"
+          if [ "$zap_status" -eq 1 ]; then
+            echo "ZAP completed with warnings only."
+            exit 0
+          fi
+          exit "$zap_status"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
