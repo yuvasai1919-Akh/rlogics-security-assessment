@@ -26,6 +26,15 @@ AI tools were used as a supporting resource for technical research, drafting, an
 - Production deployment, multi-region resilience, and production-cluster network enforcement were not validated.
 - Repository-wide secret scanning remains to be completed and reviewed before the repository is shared.
 
-## References
+## Other sources
+Official documentation for Semgrep, Trivy, ZAP, Cosign, OpenBao, Kyverno, Kubernetes and Caldera,
+plus OWASP LLM/Agentic Top 10 and MITRE ATLAS. Some ATLAS technique IDs came from secondary sources
+and should be double-checked on atlas.mitre.org.
 
-Project documentation and relevant technical documentation informed the implementation and testing. Supporting evidence is recorded in the repository's exercise notes and captured outputs.
+## Latest pipeline caveats
+The latest remediated run on 26 October 2026 passed all seven pipeline stages, but this does not
+mean the image is vulnerability-free. Trivy reported 44 HIGH image findings without available fixes;
+the policy classified them as warnings. Trivy also could not locate a Python executable for license
+detection, so that detection was skipped. ZAP reported a "Non-Storable Content" warning on three URLs.
+Cosign signing and verification used a local key with transparency-log verification disabled; this is
+a lab demonstration, not production keyless signing or transparency-backed verification.
