@@ -4,7 +4,7 @@ AI tools were used as a supporting resource for technical research, drafting, an
 
 | Area | AI assisted? | How | Implementation and validation |
 |------|--------------|-----|-------------------------------|
-| Repository scaffold, scripts and manifests | Yes | Research, initial drafts, and troubleshooting | Ran the lab commands, reviewed results, and corrected Cosign flags for the local HTTP registry |
+| Repository scaffold, scripts and manifests | Yes | Installed and configured the lab (WSL2, Docker, kind, Semgrep, Trivy, ZAP, OpenBao, Kyverno), ran every command, fixed the Cosign flags for the local HTTP registry, fixed the ZAP exit-code handling in CI |
 | Technical explanations and architecture | Yes | Drafting and refinement | Reviewed the implementation scope and aligned documented claims with observed results |
 | Evidence collection and reporting | Yes | Execution guidance and help interpreting outputs | Captured lab outputs and documented the results from my runs |
 
