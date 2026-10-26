@@ -1,0 +1,2 @@
+
+[{"critical":{"identity":{"docker-reference":"lab-registry:5000/lab-app"},"image":{"docker-manifest-digest":"sha256:2078ab7988185dbb176fcd812244023fd26579dbb08d9752d817bde99180ea43"},"type":"cosign container image signature"},"optional":null}]

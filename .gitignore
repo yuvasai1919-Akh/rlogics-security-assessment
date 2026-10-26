@@ -22,3 +22,6 @@ __pycache__/
 !kubernetes/**/*.example.key
 *.bak
 *.backup
+
+# Exclude potentially sensitive secret-scan report
+evidence/secret-scan/files-report.json

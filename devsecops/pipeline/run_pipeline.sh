@@ -74,7 +74,7 @@ trivy_fs() {
 }
 
 # ---------------------------------------------------------------- 3. Build + image scan
-build() { docker build -t "$IMG" "$ROOT/$SRC_REL"; }
+build() { DOCKER_CONFIG="$(mktemp -d)" docker build -t "$IMG" "$ROOT/$SRC_REL"; }
 
 trivy_image() {
   trivy_c image --format json --output "$OUT_REL/trivy-image.json" "$IMG" || return $?
@@ -111,7 +111,7 @@ dast() {
 }
 
 # ---------------------------------------------------------------- 6. Sign + verify
-sign() { bash "$ROOT/devsecops/signing/cosign_lab.sh" "$MODE" "$OUT_REL"; }
+sign() { DOCKER_CONFIG="$(mktemp -d)" bash "$ROOT/devsecops/signing/cosign_lab.sh" "$MODE" "$OUT_REL"; }
 
 stage "SAST (Semgrep)"            sast
 stage "SCA+secrets+misconfig fs"  trivy_fs
